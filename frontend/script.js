@@ -2,16 +2,21 @@ const API = "https://file-hosting-backend.onrender.com/api";
 
 // ================= REGISTER =================
 async function register() {
-    const username = document.getElementById("username")?.value;
-    const email = document.getElementById("email")?.value;
-    const password = document.getElementById("password")?.value;
+    const username = document.getElementById("username")?.value.trim();
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value.trim();
     const message = document.getElementById("message");
 
+    if (message) message.innerText = "";
+
+    if (!username || !email || !password) {
+        if (message) message.innerText = "Please fill all fields";
+        return;
+    }
+
     try {
-            console.log("API:", API);
-            const res = await fetch(`${API}/register`,
-                 {
-                method: "POST",
+        const res = await fetch(`${API}/register`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -21,23 +26,29 @@ async function register() {
         const data = await res.json();
 
         if (res.ok) {
-            alert("Registered Successfully");
+            alert("Registered successfully");
             window.location.href = "login.html";
         } else {
             if (message) message.innerText = data.msg || "Registration failed";
         }
     } catch (err) {
         console.error("Register error:", err);
-        if (message) message.innerText = "Error in registration";
-        alert("Registration request failed");
+        if (message) message.innerText = "Registration request failed";
     }
 }
 
 // ================= LOGIN =================
 async function login() {
-    const email = document.getElementById("email")?.value;
-    const password = document.getElementById("password")?.value;
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value.trim();
     const message = document.getElementById("message");
+
+    if (message) message.innerText = "";
+
+    if (!email || !password) {
+        if (message) message.innerText = "Please fill all fields";
+        return;
+    }
 
     try {
         const res = await fetch(`${API}/login`, {
@@ -52,15 +63,14 @@ async function login() {
 
         if (res.ok) {
             localStorage.setItem("token", data.token);
-            alert("Login Successful");
+            alert("Login successful");
             window.location.href = "upload.html";
         } else {
             if (message) message.innerText = data.msg || "Login failed";
         }
     } catch (err) {
         console.error("Login error:", err);
-        if (message) message.innerText = "Error in login";
-        alert("Login request failed");
+        if (message) message.innerText = "Login request failed";
     }
 }
 
@@ -68,13 +78,20 @@ async function login() {
 async function uploadFile() {
     const file = document.getElementById("file")?.files[0];
     const message = document.getElementById("message");
+    const token = localStorage.getItem("token");
 
-    if (!file) {
-        alert("Select file");
+    if (message) message.innerText = "";
+
+    if (!token) {
+        alert("Please login first");
+        window.location.href = "login.html";
         return;
     }
 
-    const token = localStorage.getItem("token");
+    if (!file) {
+        if (message) message.innerText = "Please select a file";
+        return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -91,7 +108,9 @@ async function uploadFile() {
         const data = await res.json();
 
         if (res.ok) {
-            alert("Uploaded");
+            if (message) message.innerText = "File uploaded successfully";
+            alert("File uploaded successfully");
+            document.getElementById("file").value = "";
         } else {
             if (message) message.innerText = data.msg || "Upload failed";
         }
@@ -101,10 +120,21 @@ async function uploadFile() {
     }
 }
 
-// ================= ALL FILES =================
+// ================= LOAD ALL FILES =================
 async function loadFiles() {
     const token = localStorage.getItem("token");
     const list = document.getElementById("fileList");
+    const message = document.getElementById("message");
+
+    if (!list) return;
+
+    list.innerHTML = "";
+    if (message) message.innerText = "";
+
+    if (!token) {
+        if (message) message.innerText = "Please login first";
+        return;
+    }
 
     try {
         const res = await fetch(`${API}/public-files`, {
@@ -114,28 +144,58 @@ async function loadFiles() {
         });
 
         const files = await res.json();
-        if (list) list.innerHTML = "";
+
+        if (!res.ok) {
+            if (message) message.innerText = files.msg || "Could not load files";
+            return;
+        }
+
+        if (files.length === 0) {
+            list.innerHTML = `<div class="empty-state">No files available right now.</div>`;
+            return;
+        }
 
         files.forEach(file => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <b>${file.filename}</b><br>
-                ${file.uploaded_by?.email || "Unknown"}<br>
-                <a href="https://file-hosting-backend.onrender.com/${file.path.replaceAll("\\\\", "/")}" target="_blank">Download</a>
-                <hr>
+            const safePath = file.path.replace(/\\/g, "/");
+            const owner = file.uploaded_by?.email || "Unknown";
+
+            const card = document.createElement("div");
+            card.className = "file-card";
+            card.innerHTML = `
+                <div class="file-info">
+                    <h3>${file.filename}</h3>
+                    <p><strong>Owner:</strong> ${owner}</p>
+                    <p><strong>Size:</strong> ${file.size} bytes</p>
+                    <p><strong>Uploaded:</strong> ${new Date(file.uploaded_at).toLocaleString()}</p>
+                </div>
+                <div class="file-actions">
+                    <a href="https://file-hosting-backend.onrender.com/${safePath}" target="_blank">Download</a>
+                </div>
             `;
-            list?.appendChild(li);
+            list.appendChild(card);
         });
+
     } catch (err) {
         console.error("Load files error:", err);
-        alert("Error loading files");
+        if (message) message.innerText = "Error loading files";
     }
 }
 
-// ================= MY FILES =================
+// ================= LOAD MY FILES =================
 async function loadMyFiles() {
     const token = localStorage.getItem("token");
     const list = document.getElementById("myFileList");
+    const message = document.getElementById("message");
+
+    if (!list) return;
+
+    list.innerHTML = "";
+    if (message) message.innerText = "";
+
+    if (!token) {
+        if (message) message.innerText = "Please login first";
+        return;
+    }
 
     try {
         const res = await fetch(`${API}/my-files`, {
@@ -145,26 +205,52 @@ async function loadMyFiles() {
         });
 
         const files = await res.json();
-        if (list) list.innerHTML = "";
+
+        if (!res.ok) {
+            if (message) message.innerText = files.msg || "Could not load your files";
+            return;
+        }
+
+        if (files.length === 0) {
+            list.innerHTML = `<div class="empty-state">You have not uploaded any files yet.</div>`;
+            return;
+        }
 
         files.forEach(file => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <b>${file.filename}</b><br>
-                <button onclick="deleteFile('${file._id}')">Delete</button>
-                <hr>
+            const card = document.createElement("div");
+            card.className = "file-card";
+            card.innerHTML = `
+                <div class="file-info">
+                    <h3>${file.filename}</h3>
+                    <p><strong>Size:</strong> ${file.size} bytes</p>
+                    <p><strong>Uploaded:</strong> ${new Date(file.uploaded_at).toLocaleString()}</p>
+                </div>
+                <div class="file-actions">
+                    <button class="danger-btn" onclick="deleteFile('${file._id}')">Delete</button>
+                </div>
             `;
-            list?.appendChild(li);
+            list.appendChild(card);
         });
+
     } catch (err) {
         console.error("Load my files error:", err);
-        alert("Error loading my files");
+        if (message) message.innerText = "Error loading your files";
     }
 }
 
-// ================= DELETE =================
+// ================= DELETE FILE =================
 async function deleteFile(id) {
     const token = localStorage.getItem("token");
+    const message = document.getElementById("message");
+
+    if (!token) {
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const confirmDelete = confirm("Are you sure you want to delete this file?");
+    if (!confirmDelete) return;
 
     try {
         const res = await fetch(`${API}/files/${id}`, {
@@ -174,14 +260,23 @@ async function deleteFile(id) {
             }
         });
 
+        const data = await res.json();
+
         if (res.ok) {
-            alert("Deleted");
+            if (message) message.innerText = "File deleted successfully";
             loadMyFiles();
         } else {
-            alert("Delete failed");
+            if (message) message.innerText = data.msg || "Delete failed";
         }
     } catch (err) {
         console.error("Delete error:", err);
-        alert("Delete failed");
+        if (message) message.innerText = "Delete failed";
     }
+}
+
+// ================= LOGOUT =================
+function logout() {
+    localStorage.removeItem("token");
+    alert("Logged out successfully");
+    window.location.href = "login.html";
 }

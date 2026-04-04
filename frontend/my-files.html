@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Files</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Files - Secure File Hosting</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="loadMyFiles()">
+    <div class="navbar">
+        <div class="brand">🔐 SecureFile</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="upload.html">Upload</a>
+            <a href="downloads.html">Downloads</a>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
 
-<div class="container">
-    <h2>My Files</h2>
+    <div class="page">
+        <div class="container large">
+            <h2>My Files</h2>
+            <p class="subtitle">View and delete only the files uploaded by you</p>
 
-    <button onclick="loadMyFiles()">Load My Files</button>
+            <div id="myFileList" class="file-grid"></div>
+            <p class="message" id="message"></p>
+        </div>
+    </div>
 
-    <ul id="myFileList"></ul>
-
-    <br>
-    <a href="upload.html">Back to Upload</a>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

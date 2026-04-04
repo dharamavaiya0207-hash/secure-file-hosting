@@ -1,25 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Secure File Hosting</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="navbar">
+        <div class="brand">🔐 SecureFile</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="login.html">Login</a>
+        </div>
+    </div>
 
-<div class="container">
-    <h2>Register</h2>
+    <div class="page">
+        <div class="container">
+            <h2>Create Account</h2>
+            <p class="subtitle">Register to upload and manage your files securely</p>
 
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="email" id="email" placeholder="Email"><br>
-    <input type="password" id="password" placeholder="Password"><br>
+            <input type="text" id="username" placeholder="Enter username">
+            <input type="email" id="email" placeholder="Enter email">
+            <input type="password" id="password" placeholder="Enter password">
 
-    <button onclick="register()">Register</button>
+            <button class="primary-btn" onclick="register()">Register</button>
 
-    <p id="message"></p>
+            <p class="message" id="message"></p>
 
-    <p>Already have account? <a href="login.html">Login</a></p>
-</div>
+            <p class="auth-link">Already have an account? <a href="login.html">Login</a></p>
+        </div>
+    </div>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
