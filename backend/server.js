@@ -18,8 +18,6 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options('*', cors());
-
 app.use('/uploads', express.static('uploads'));
 
 // ================= DATABASE =================
