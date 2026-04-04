@@ -12,9 +12,12 @@ const app = express();
 app.use(express.json());
 app.use(cors({
     origin: "*",
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+app.options('*', cors());
+
 app.use('/uploads', express.static('uploads'));
 
 // ================= DATABASE =================
