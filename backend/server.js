@@ -79,30 +79,50 @@ const upload = multer({
 
 // REGISTER
 app.post('/api/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    try {
+        const { username, email, password } = req.body;
 
-    const exist = await User.findOne({ email });
-    if (exist) return res.status(400).json({ msg: 'Email already exists' });
+        if (!username || !email || !password) {
+            return res.status(400).json({ msg: 'All fields are required' });
+        }
 
-    const hash = await bcrypt.hash(password, 10);
-    const user = new User({ username, email, password: hash });
+        const exist = await User.findOne({ email });
+        if (exist) {
+            return res.status(400).json({ msg: 'Email already exists' });
+        }
 
-    await user.save();
-    res.json({ msg: 'Registered successfully' });
+        const hash = await bcrypt.hash(password, 10);
+        const user = new User({ username, email, password: hash });
+
+        await user.save();
+        res.json({ msg: 'Registered successfully' });
+    } catch (err) {
+        console.error('Register route error:', err);
+        res.status(500).json({ msg: 'Server error in register' });
+    }
 });
 
 // LOGIN
 app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'User not found' });
+        if (!email || !password) {
+            return res.status(400).json({ msg: 'Email and password are required' });
+        }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ msg: 'Wrong password' });
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ msg: 'User not found' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.json({ token });
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) return res.status(400).json({ msg: 'Wrong password' });
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        res.json({ token });
+    } catch (err) {
+        console.error('Login route error:', err);
+        res.status(500).json({ msg: 'Server error in login' });
+    }
 });
 
 // UPLOAD
