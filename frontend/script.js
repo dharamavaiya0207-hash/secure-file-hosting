@@ -1,5 +1,4 @@
-const API = "http://localhost:5000/api";
-
+const API = "https://file-hosting-backend.onrender.com/api";
 // ================= REGISTER =================
 async function register() {
     const username = document.getElementById("username")?.value;
