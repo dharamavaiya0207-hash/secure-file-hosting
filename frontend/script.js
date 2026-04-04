@@ -8,8 +8,10 @@ async function register() {
     const message = document.getElementById("message");
 
     try {
-        const res = await fetch(`${API}/register`, {
-            method: "POST",
+            console.log("API:", API);
+            const res = await fetch(`${API}/register`,
+                 {
+                method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
