@@ -10,7 +10,11 @@ const fs = require('fs');
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use('/uploads', express.static('uploads'));
 
 // ================= DATABASE =================
