@@ -156,6 +156,10 @@ app.get('/api/my-files', auth, async (req, res) => {
     res.json(files);
 });
 
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully 🚀");
+});
+
 // DELETE
 app.delete('/api/files/:id', auth, async (req, res) => {
     try {
@@ -182,8 +186,4 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("Backend is running successfully 🚀");
 });
