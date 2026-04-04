@@ -9,7 +9,9 @@ const fs = require('fs');
 
 const app = express();
 
+// ================= MIDDLEWARE =================
 app.use(express.json());
+
 app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "DELETE", "OPTIONS"],
@@ -21,9 +23,14 @@ app.options('*', cors());
 app.use('/uploads', express.static('uploads'));
 
 // ================= DATABASE =================
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('✅ MongoDB Connected'))
+.catch(err => {
+    console.error('❌ MongoDB ERROR:', err);
+});
 
 // ================= MODELS =================
 const userSchema = new mongoose.Schema({
@@ -96,8 +103,9 @@ app.post('/api/register', async (req, res) => {
 
         await user.save();
         res.json({ msg: 'Registered successfully' });
+
     } catch (err) {
-        console.error('Register route error:', err);
+        console.error('🔥 Register ERROR:', err);
         res.status(500).json({ msg: 'Server error in register' });
     }
 });
@@ -107,10 +115,6 @@ app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ msg: 'Email and password are required' });
-        }
-
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ msg: 'User not found' });
 
@@ -119,26 +123,33 @@ app.post('/api/login', async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
         res.json({ token });
+
     } catch (err) {
-        console.error('Login route error:', err);
+        console.error('🔥 Login ERROR:', err);
         res.status(500).json({ msg: 'Server error in login' });
     }
 });
 
 // UPLOAD
 app.post('/api/upload', auth, upload.single('file'), async (req, res) => {
-    const file = new File({
-        filename: req.file.filename,
-        path: req.file.path,
-        size: req.file.size,
-        uploaded_by: req.user.id
-    });
+    try {
+        const file = new File({
+            filename: req.file.filename,
+            path: req.file.path,
+            size: req.file.size,
+            uploaded_by: req.user.id
+        });
 
-    await file.save();
-    res.json({ msg: 'File uploaded' });
+        await file.save();
+        res.json({ msg: 'File uploaded' });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Upload error' });
+    }
 });
 
-// ALL FILES
+// PUBLIC FILES
 app.get('/api/public-files', auth, async (req, res) => {
     const files = await File.find().populate('uploaded_by', 'email');
     res.json(files);
@@ -152,20 +163,28 @@ app.get('/api/my-files', auth, async (req, res) => {
 
 // DELETE
 app.delete('/api/files/:id', auth, async (req, res) => {
-    const file = await File.findById(req.params.id);
+    try {
+        const file = await File.findById(req.params.id);
 
-    if (!file) return res.status(404).json({ msg: 'Not found' });
+        if (!file) return res.status(404).json({ msg: 'Not found' });
 
-    if (file.uploaded_by.toString() !== req.user.id)
-        return res.status(403).json({ msg: 'Unauthorized' });
+        if (file.uploaded_by.toString() !== req.user.id)
+            return res.status(403).json({ msg: 'Unauthorized' });
 
-    fs.unlinkSync(file.path);
-    await File.findByIdAndDelete(req.params.id);
+        fs.unlinkSync(file.path);
+        await File.findByIdAndDelete(req.params.id);
 
-    res.json({ msg: 'Deleted' });
+        res.json({ msg: 'Deleted' });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Delete error' });
+    }
 });
 
 // ================= START =================
-app.listen(process.env.PORT, () =>
-    console.log(`Server running on ${process.env.PORT}`)
-);
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
