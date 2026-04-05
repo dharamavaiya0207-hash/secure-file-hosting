@@ -186,7 +186,7 @@ frontend/index.html
 
 ## 👨‍💻 Author
 
-**Dharam Avaiya**
+**Priya Avaiya**
 
 GitHub:
 https://github.com/dharamavaiya0207-hash
