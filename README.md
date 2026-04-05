@@ -1,47 +1,76 @@
-# Secure File Hosting Web Application
+# 🔐 Secure File Hosting System
 
-## Project Overview
-This is a full-stack web application that allows users to securely upload and manage files.
-
-Users can:
-- Register and login
-- Upload files (PDF and MP4 only)
-- View all uploaded files
-- View their own files
-- Delete only their own files
+A full-stack cloud-based web application that allows users to securely upload, store, download, and manage files with authentication and authorization.
 
 ---
 
-## Technologies Used
-- Frontend: HTML, CSS, JavaScript
-- Backend: Node.js, Express.js
-- Database: MongoDB Atlas
-- Authentication: JWT (JSON Web Token)
-- File Upload: Multer
+## 🚀 Live Demo
+
+* 🌐 **Frontend:** https://spectacular-gaufre-1f5cbf.netlify.app
+* ⚙️ **Backend:**  https://file-hosting-backend.onrender.com
 
 ---
 
-## Features
-- User registration with unique email
-- Secure login with JWT authentication
-- Password hashing using bcrypt
-- File upload (PDF & MP4 only)
-- File size limit: 20MB
-- Public downloads page (all users)
-- My Files page (only user’s files)
-- Delete access control (only owner can delete)
-- MongoDB cloud database integration
+## 📌 Features
+
+### 👤 User Authentication
+
+* User Registration (username, email, password)
+* Secure Login using JWT (JSON Web Tokens)
+* Password hashing using bcrypt
+
+### 📁 File Management
+
+* Upload files (PDF & MP4 only)
+* View all uploaded files (public files)
+* View only your uploaded files
+* Delete only your own files (authorization protected)
+
+### 🔐 Security
+
+* JWT-based authentication
+* Protected routes (only logged-in users)
+* Users cannot delete files uploaded by others
+
+### ☁️ Cloud Deployment
+
+* Backend deployed on **Render**
+* Frontend deployed on **Netlify**
+* Database hosted on **MongoDB Atlas**
 
 ---
 
-## Folder Structure
+## 🛠️ Tech Stack
 
+### Frontend
+
+* HTML5
+* CSS3 (Modern UI with responsive design)
+* JavaScript (Vanilla JS)
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB (Mongoose ODM)
+
+### Tools & Services
+
+* MongoDB Atlas (Cloud Database)
+* Render (Backend Hosting)
+* Netlify (Frontend Hosting)
+* GitHub (Version Control)
+
+---
+
+## 📂 Project Structure
+
+```
 secure-file-hosting/
 │
 ├── backend/
 │   ├── server.js
 │   ├── package.json
-│   ├── package-lock.json
 │   └── uploads/
 │
 ├── frontend/
@@ -55,72 +84,115 @@ secure-file-hosting/
 │   └── script.js
 │
 └── README.md
+```
 
 ---
 
-## API Endpoints
+## ⚙️ Setup Instructions (Local)
 
-### Authentication
-- POST /api/register → Register new user
-- POST /api/login → Login user
+### 1. Clone Repository
 
-### File APIs
-- POST /api/upload → Upload file
-- GET /api/public-files → Get all files
-- GET /api/my-files → Get user files
-- DELETE /api/files/:id → Delete file
-
----
-
-## Deployment Links
-
-Frontend:
-https://taupe-piroshki-628926.netlify.app/register.html
-
-Backend:
-https://file-hosting-backend.onrender.com
-
----
-
-## How to Run Locally
-
-1. Clone repository:
+```
 git clone https://github.com/dharamavaiya0207-hash/secure-file-hosting.git
+cd secure-file-hosting
+```
 
-2. Go to backend:
+---
+
+### 2. Backend Setup
+
+```
 cd backend
-
-3. Install dependencies:
 npm install
+```
 
-4. Create .env file:
+Create `.env` file:
+
+```
+MONGO_URI=your_mongodb_atlas_url
+JWT_SECRET=your_secret_key
 PORT=5000
-MONGO_URI=your_mongodb_url
-JWT_SECRET=secret123
+```
 
-5. Run backend:
+Run server:
+
+```
 node server.js
-
-6. Open frontend:
-Open register.html in browser
+```
 
 ---
 
-## Demo Flow
+### 3. Frontend Setup
 
-1. Register user
-2. Login
-3. Upload file
-4. Open Downloads page
-5. Register second user
-6. Login second user
-7. Show first user's file
-8. Upload second file
-9. Show both files
-10. Delete file
-11. Show updated list
+Simply open:
+
+```
+frontend/index.html
+```
 
 ---
 
-## Author
-Priya Avaiya
+## 🔗 API Endpoints
+
+| Method | Endpoint          | Description    |
+| ------ | ----------------- | -------------- |
+| POST   | /api/register     | Register user  |
+| POST   | /api/login        | Login user     |
+| POST   | /api/upload       | Upload file    |
+| GET    | /api/public-files | Get all files  |
+| GET    | /api/my-files     | Get user files |
+| DELETE | /api/files/:id    | Delete file    |
+
+---
+
+## 🧠 How It Works
+
+1. User registers and logs in
+2. Server generates JWT token
+3. Token is stored in browser (localStorage)
+4. User uploads file → stored in server + MongoDB
+5. Files can be viewed/downloaded
+6. Only owner can delete their files
+
+---
+
+## 🎯 Key Highlights
+
+* Full-stack application (Frontend + Backend)
+* Secure authentication system
+* Real-time cloud deployment
+* Clean and responsive UI
+* Role-based access control
+
+---
+
+## ⚠️ Limitations
+
+* Files stored on server (temporary storage in free hosting)
+* No file preview (only download)
+* Basic UI (can be enhanced further)
+
+---
+
+## 🔮 Future Improvements
+
+* File preview (PDF viewer, video player)
+* Drag & drop upload
+* File sharing via links
+* User profile system
+* Storage optimization using AWS S3 / Cloudinary
+
+---
+
+## 👨‍💻 Author
+
+**Dharam Avaiya**
+
+GitHub:
+https://github.com/dharamavaiya0207-hash
+
+---
+
+## 📜 License
+
+This project is created for educational purposes.
