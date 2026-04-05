@@ -8,6 +8,9 @@ A full-stack cloud-based web application that allows users to securely upload, s
 
 * 🌐 **Frontend:** https://spectacular-gaufre-1f5cbf.netlify.app
 * ⚙️ **Backend:**  https://file-hosting-backend.onrender.com
+GitHub:
+https://github.com/dharamavaiya0207-hash/secure-file-hosting
+
 
 ---
 
@@ -188,11 +191,5 @@ frontend/index.html
 
 **Priya Avaiya**
 
-GitHub:
-https://github.com/dharamavaiya0207-hash
 
----
 
-## 📜 License
-
-This project is created for educational purposes.
